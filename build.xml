@@ -87,7 +87,7 @@
 		<java fork="yes" classname="${main.class}" classpathref="project.classpath">
 			<jvmarg value="-Djppf.config=jppf.properties"/>
 			<jvmarg value="-Djava.util.logging.config.file=config/logging.properties"/>
-			<jvmarg value="-Xmx64m"/>
+			<jvmarg value="-Xmx1024m"/>
             <arg value="${thread}"/>
             <arg value="1"/>
             <arg value="${data.dir}/${size}/a.txt"/>
