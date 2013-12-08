@@ -29,6 +29,9 @@
 	<property name="classes.dir" value="${basedir}/classes"/>	
 	<property name="src.dir"     value="${basedir}/src"/>
 
+    <property environment="env"/>
+    <property name="data.dir"   value="${env.HOME}/CHT"/>
+
 	<!-- ========================================================================= -->
 	<!--                           Classpath definitions                           -->
 	<!-- ========================================================================= -->
@@ -85,6 +88,11 @@
 			<jvmarg value="-Djppf.config=jppf.properties"/>
 			<jvmarg value="-Djava.util.logging.config.file=config/logging.properties"/>
 			<jvmarg value="-Xmx64m"/>
+            <arg value="${thread}"/>
+            <arg value="1"/>
+            <arg value="${data.dir}/${size}/a.txt"/>
+            <arg value="${data.dir}/${size}/b.txt"/>
+            <redirector output="${output}"/>
 		</java>
 	</target>
 
