@@ -1,4 +1,4 @@
-package org.jppf.application.template;
+package org.jppf.application.matrixmultiplication;
 
 public class MatrixSubMultiplicationResult implements java.io.Serializable {
     public final int m1, n1; 

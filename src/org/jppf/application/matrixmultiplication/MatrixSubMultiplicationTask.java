@@ -1,4 +1,4 @@
-package org.jppf.application.template;
+package org.jppf.application.matrixmultiplication;
 
 import org.jppf.server.protocol.JPPFTask;
 

@@ -18,10 +18,6 @@
 package org.jppf.application.template;
 
 import java.util.List;
-import java.util.Scanner;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.BufferedReader;
 
 import org.jppf.client.*;
 import org.jppf.server.protocol.JPPFTask;
@@ -32,7 +28,7 @@ import org.jppf.server.protocol.JPPFTask;
  * to write an application using JPPF.
  * @author Laurent Cohen
  */
-public class MatrixMultiplicationRunner {
+public class TemplateApplicationRunner {
   /**
    * The JPPF client, handles all communications with the server.
    * It is recommended to only use one JPPF client per JVM, so it
@@ -45,50 +41,23 @@ public class MatrixMultiplicationRunner {
    * @param args by default, we do not use the command line arguments,
    * however nothing prevents us from using them if need be.
    */
-  public static void main(final String...args) throws FileNotFoundException, MatrixMultiplicationSolver.FailBuildFromFileException {
-    if(args.length != 4) {
-        System.err.println("Usage: java MatrixMultiplicationSolver ROW_JOBS COL_JOBS FILE_A FILE_B");
-        throw new IllegalArgumentException();
-    }
-    int mJob = Integer.parseInt(args[0]);
-    int nJob = Integer.parseInt(args[1]);
-    int[][] a = MatrixMultiplicationSolver.buildMatrixFromFile(args[2]);
-    int[][] b = MatrixMultiplicationSolver.buildMatrixFromFile(args[3]);
+  public static void main(final String...args) {
     try {
       // create the JPPFClient. This constructor call causes JPPF to read the configuration file
       // and connect with one or multiple JPPF drivers.
       jppfClient = new JPPFClient();
 
       // create a runner instance.
-      MatrixMultiplicationRunner runner = new MatrixMultiplicationRunner();
+      TemplateApplicationRunner runner = new TemplateApplicationRunner();
 
       // Create a job
-      JPPFJob job = runner.createJob(a, b, mJob, nJob);
+      JPPFJob job = runner.createJob();
 
       // execute a blocking job
-      final List<JPPFTask> results = runner.executeBlockingJob(job);
+      runner.executeBlockingJob(job);
 
       // execute a non-blocking job
       //runner.executeNonBlockingJob(job);
-
-      // Collect results
-      int[][] totalResult = new int[a.length][b[0].length];
-      for(JPPFTask t: results){
-          if(t.getException() == null){
-              MatrixSubMultiplicationResult r = (MatrixSubMultiplicationResult) t.getResult();
-              MatrixMultiplicationSolver.mergeSubResult(totalResult, r.matrix, r.m1, r.n1);
-          } else {
-              t.getException().printStackTrace();
-          }
-      }
-
-      // Output results;
-      System.out.println(totalResult.length + " " + totalResult[0].length);
-      for(int[] r: totalResult){
-          for(int c: r) System.out.print(c + " ");
-          System.out.println("");
-      }
-
     } catch(Exception e) {
       e.printStackTrace();
     } finally {
@@ -101,28 +70,17 @@ public class MatrixMultiplicationRunner {
    * @return an instance of the {@link org.jppf.client.JPPFJob JPPFJob} class.
    * @throws Exception if an error occurs while creating the job or adding tasks.
    */
-  public JPPFJob createJob(int[][] a, int[][] b, int mJob, int nJob) throws Exception {
+  public JPPFJob createJob() throws Exception {
     // create a JPPF job
     JPPFJob job = new JPPFJob();
 
     // give this job a readable unique id that we can use to monitor and manage it.
-    job.setName("MatrixMultiplication");
+    job.setName("Template Job Id");
 
     // add a task to the job.
-    //job.addTask(new MatrixSubMultiplicationJob());
+    job.addTask(new TemplateJPPFTask());
 
     // add more tasks here ...
-    for(int i = 0 ; i < mJob ; i++){
-        int m1 = a.length / mJob * i;
-        int m2 = m1 + a.length / mJob + (i + 1 == mJob ? a.length % mJob : 0);
-        for(int j = 0; j < nJob ; j++){
-            int n1 = b[0].length / nJob * j;
-            int n2 = n1 + b[0].length / nJob + (j + 1 == nJob ? b[0].length % nJob : 0);
-            //jobs[i][j] = new MatrixSubMultiplicationJob(a, b, m1, m2, n1, n2);
-            //jobs[i][j].start();
-            job.addTask(new MatrixSubMultiplicationTask(a, b, m1, m2, n1, n2));
-        }
-    }
 
     // there is no guarantee on the order of execution of the tasks,
     // however the results are guaranteed to be returned in the same order as the tasks.
@@ -135,7 +93,7 @@ public class MatrixMultiplicationRunner {
    * @param job the JPPF job to execute.
    * @throws Exception if an error occurs while executing the job.
    */
-  public List<JPPFTask> executeBlockingJob(final JPPFJob job) throws Exception {
+  public void executeBlockingJob(final JPPFJob job) throws Exception {
     // set the job in blocking mode.
     job.setBlocking(true);
 
@@ -145,7 +103,7 @@ public class MatrixMultiplicationRunner {
     List<JPPFTask> results = jppfClient.submit(job);
 
     // process the results
-    return results;
+    processExecutionResults(results);
   }
 
   /**
@@ -154,7 +112,7 @@ public class MatrixMultiplicationRunner {
    * @param job the JPPF job to execute.
    * @throws Exception if an error occurs while executing the job.
    */
-  public List<JPPFTask> executeNonBlockingJob(final JPPFJob job) throws Exception {
+  public void executeNonBlockingJob(final JPPFJob job) throws Exception {
     // set the job in non-blocking (or asynchronous) mode.
     job.setBlocking(false);
 
@@ -172,7 +130,7 @@ public class MatrixMultiplicationRunner {
     List<JPPFTask> results = collector.waitForResults();
 
     // process the results
-    return results;
+    processExecutionResults(results);
   }
 
   /**

@@ -1,4 +1,4 @@
-package org.jppf.application.template;
+package org.jppf.application.matrixmultiplication;
 
 import java.util.Scanner;
 import java.io.FileNotFoundException;
