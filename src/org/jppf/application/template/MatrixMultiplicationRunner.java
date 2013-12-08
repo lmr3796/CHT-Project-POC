@@ -32,7 +32,7 @@ import org.jppf.server.protocol.JPPFTask;
  * to write an application using JPPF.
  * @author Laurent Cohen
  */
-public class TemplateApplicationRunner {
+public class MatrixMultiplicationRunner {
   /**
    * The JPPF client, handles all communications with the server.
    * It is recommended to only use one JPPF client per JVM, so it
@@ -60,7 +60,7 @@ public class TemplateApplicationRunner {
       jppfClient = new JPPFClient();
 
       // create a runner instance.
-      TemplateApplicationRunner runner = new TemplateApplicationRunner();
+      MatrixMultiplicationRunner runner = new MatrixMultiplicationRunner();
 
       // Create a job
       JPPFJob job = runner.createJob(a, b, mJob, nJob);
@@ -76,7 +76,7 @@ public class TemplateApplicationRunner {
       for(JPPFTask t: results){
           if(t.getException() == null){
               MatrixSubMultiplicationResult r = (MatrixSubMultiplicationResult) t.getResult();
-              MatrixMultiplicationSolver.mergeSubResult(totalResult, r.matrix(), r.m1(), r.n1());
+              MatrixMultiplicationSolver.mergeSubResult(totalResult, r.matrix, r.m1, r.n1);
           } else {
               t.getException().printStackTrace();
           }

@@ -1,6 +1,6 @@
 package org.jppf.application.template;
 
-public class MatrixSubMultiplicationResult {
+public class MatrixSubMultiplicationResult implements java.io.Serializable {
     public final int m1, n1; 
     public final int [][] matrix;
     public MatrixSubMultiplicationResult(int m1, int n1, int [][] matrix) {
