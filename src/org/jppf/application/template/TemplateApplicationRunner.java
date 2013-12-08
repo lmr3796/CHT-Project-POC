@@ -18,6 +18,10 @@
 package org.jppf.application.template;
 
 import java.util.List;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 import org.jppf.client.*;
 import org.jppf.server.protocol.JPPFTask;
@@ -41,15 +45,15 @@ public class TemplateApplicationRunner {
    * @param args by default, we do not use the command line arguments,
    * however nothing prevents us from using them if need be.
    */
-  public static void main(final String...args) {
+  public static void main(final String...args) throws FileNotFoundException, MatrixMultiplicationSolver.FailBuildFromFileException {
     if(args.length != 4) {
         System.err.println("Usage: java MatrixMultiplicationSolver ROW_JOBS COL_JOBS FILE_A FILE_B");
         throw new IllegalArgumentException();
     }
     int mJob = Integer.parseInt(args[0]);
     int nJob = Integer.parseInt(args[1]);
-    int[][] a = buildMatrixFromFile(args[2]);
-    int[][] b = buildMatrixFromFile(args[3]);
+    int[][] a = MatrixMultiplicationSolver.buildMatrixFromFile(args[2]);
+    int[][] b = MatrixMultiplicationSolver.buildMatrixFromFile(args[3]);
     try {
       // create the JPPFClient. This constructor call causes JPPF to read the configuration file
       // and connect with one or multiple JPPF drivers.
@@ -59,7 +63,7 @@ public class TemplateApplicationRunner {
       TemplateApplicationRunner runner = new TemplateApplicationRunner();
 
       // Create a job
-      JPPFJob job = runner.createJob();
+      JPPFJob job = runner.createJob(a, b, mJob, nJob);
 
       // execute a blocking job
       final List<JPPFTask> results = runner.executeBlockingJob(job);
@@ -69,6 +73,14 @@ public class TemplateApplicationRunner {
 
       // Collect results
       int[][] totalResult = new int[a.length][b[0].length];
+      for(JPPFTask t: results){
+          if(t.getException() == null){
+              MatrixSubMultiplicationResult r = (MatrixSubMultiplicationResult) t.getResult();
+              MatrixMultiplicationSolver.mergeSubResult(totalResult, r.matrix(), r.m1(), r.n1());
+          } else {
+              t.getException().printStackTrace();
+          }
+      }
 
       // Output results;
       System.out.println(totalResult.length + " " + totalResult[0].length);
@@ -108,7 +120,7 @@ public class TemplateApplicationRunner {
             int n2 = n1 + b[0].length / nJob + (j + 1 == nJob ? b[0].length % nJob : 0);
             //jobs[i][j] = new MatrixSubMultiplicationJob(a, b, m1, m2, n1, n2);
             //jobs[i][j].start();
-            job.addTask(new MatrixSubMultiplicationJob(a, b, m1, m2, n1, n2));
+            job.addTask(new MatrixSubMultiplicationTask(a, b, m1, m2, n1, n2));
         }
     }
 

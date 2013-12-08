@@ -59,7 +59,7 @@ public final class MatrixMultiplicationSolver {
     /**
      * Place sub[0][0] at total[m][n]
      */
-    private static void mergeSubResult(int[][] total, int[][] sub, int m, int n){
+    public static void mergeSubResult(int[][] total, int[][] sub, int m, int n){
         for(int i = 0 ; i < sub.length ; i++)
             for(int j = 0 ; j < sub[i].length ; j++)
                 total[m+i][j+n] = sub[i][j];

@@ -25,8 +25,10 @@ public class MatrixSubMultiplicationTask extends JPPFTask implements Runnable{
     public void run() {
         try {
             m = new MatrixSubMultiplicationResult(m1, n1, MatrixMultiplicationSolver.solve(a, b, m1, m2, n1, n2));
+            setResult(m);
         } catch (Exception e) { 
             e.printStackTrace();
         }
     }
+
 }
