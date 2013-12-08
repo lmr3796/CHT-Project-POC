@@ -1,7 +1,0 @@
-2013-12-08 06:51:51,257 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(88)]: --------------------------------------------------------------------------------
-2013-12-08 06:51:51,268 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(89)]: JPPF version information: Version: 3.3.6, Build number: 1171, Build date: 2013-09-20 03:09 CEST
-2013-12-08 06:51:51,269 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(90)]: starting node with PID=2238, UUID=7559AF5F-5FC3-39D1-D954-40BE08F1684D
-2013-12-08 06:51:51,279 [INFO ][org.jppf.utils.VersionUtils.logVersionInformation(91)]: --------------------------------------------------------------------------------
-2013-12-08 06:51:52,385 [INFO ][org.jppf.classloader.ClassLoaderRequestHandler.run(152)]: maxBatchSize = 1
-2013-12-08 06:51:52,461 [INFO ][org.jppf.server.node.NodeExecutionManagerImpl.<init>(132)]: running 2 processing threads
-2013-12-08 06:51:52,462 [INFO ][org.jppf.server.node.NodeExecutionManagerImpl.createThreadManager(159)]: Using default thread manager
