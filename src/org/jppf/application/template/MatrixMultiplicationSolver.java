@@ -65,6 +65,16 @@ public final class MatrixMultiplicationSolver {
                 total[m+i][j+n] = sub[i][j];
         return;
     }
+    private static class MatrixSubMultiplicationJob extends Thread{
+        private MatrixSubMultiplicationTask t;
+        public MatrixSubMultiplicationJob(MatrixSubMultiplicationTask t){
+            super(t);
+            this.t = t;
+        }
+        public MatrixSubMultiplicationResult getResult(){
+            return t.getResult();
+        }
+    }
 
     // TODO when you use one line comment to illustrate what you are
     // doing.  You could consider use small methods with a descriptive
@@ -78,6 +88,7 @@ public final class MatrixMultiplicationSolver {
         int nJob = Integer.parseInt(args[1]);
         int[][] a = buildMatrixFromFile(args[2]);
         int[][] b = buildMatrixFromFile(args[3]);
+        
 
         // Deploy the jobs
         MatrixSubMultiplicationJob[][] jobs = new MatrixSubMultiplicationJob[mJob][nJob];
@@ -87,7 +98,7 @@ public final class MatrixMultiplicationSolver {
             for(int j = 0; j < nJob ; j++){
                 int n1 = b[0].length / nJob * j;
                 int n2 = n1 + b[0].length / nJob + (j + 1 == nJob ? b[0].length % nJob : 0);
-                jobs[i][j] = new MatrixSubMultiplicationJob(a, b, m1, m2, n1, n2);
+                jobs[i][j] = new MatrixSubMultiplicationJob(new MatrixSubMultiplicationTask(a, b, m1, m2, n1, n2));
                 jobs[i][j].start();
             }
         }
