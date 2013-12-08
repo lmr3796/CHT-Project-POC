@@ -8,25 +8,24 @@ import java.io.BufferedReader;
 // TODO One class for one role.
 // TODO I think that move main function out of this class is better.
 public final class MatrixMultiplicationSolver {
-    public static class DimensionNotMatchException extends java.lang.Exception{}
-    public static class ArrayNotUniformException extends java.lang.Exception{}
-    public static class FailBuildFromFileException extends java.lang.Exception{}
+    public static class DimensionNotMatchException extends IllegalArgumentException{}
+    public static class ArrayNotUniformException extends IllegalArgumentException{}
+    public static class FailBuildFromFileException extends IllegalArgumentException{}
 
     private static boolean matrixIsUniform(int[][] a) {
-        for(int[] row: a) if(!(row.length > 0 && row.length == a[0].length)) return false;
+        for(int[] row: a) if(!(row.length > 0 && row.length == a[0].length)){ return false;}
         return true;
     }
 
     private static boolean matrixDimensionMatch(int[][] a, int [][] b){
-        return a[0].length != b.length;
+        return a[0].length == b.length;
     }
 
     /**
      * A partial solver solves, matrix multiplication a*b, which is size of N*N
      * The solve range is {[x1, x2) x [y1, y2)}
      */
-    public static int[][] solve(int[][] a, int[][] b, int m1, int m2, int n1, int n2)
-            throws ArrayNotUniformException, DimensionNotMatchException {
+    public static int[][] solve(int[][] a, int[][] b, int m1, int m2, int n1, int n2) {
         // Sanity check
         if(!(m1 >= 0 && m2 <= a.length && m2 > m1)) throw new IllegalArgumentException();
         if(!(n1 >= 0 && n2 <= b[0].length && n2 > n1)) throw new IllegalArgumentException();
@@ -101,7 +100,7 @@ public final class MatrixMultiplicationSolver {
         int[][] totalResult = new int[a.length][b[0].length];
         for(int i = 0; i < mJob ; i++)
             for(int j = 0; j < nJob ; j++)
-                mergeSubResult(totalResult, jobs[i][j].getResult(), jobs[i][j].m1, jobs[i][j].n1);
+                mergeSubResult(totalResult, jobs[i][j].getResult().matrix, jobs[i][j].getResult().m1, jobs[i][j].getResult().n1);
 
         // Output results;
         System.out.println(totalResult.length + " " + totalResult[0].length);
